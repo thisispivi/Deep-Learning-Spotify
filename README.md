@@ -1,1 +1,1 @@
-# Deep-Learning-Spotify
+# Deep-Learning-Water-Potability
