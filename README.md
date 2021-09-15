@@ -62,13 +62,13 @@ This readme will explain the dataset structure, how the project works and the be
 The ```water_potability.csv``` file contains water quality metrics for 3276 different water bodies.
 
 ## 1. pH value:
-PH is an important parameter in evaluating the acid–base balance of water. It is also the indicator of acidic or alkaline condition of water status. WHO has recommended maximum permissible limit of pH from 6.5 to 8.5. The current investigation ranges were 6.52–6.83 which are in the range of WHO standards.
+PH is an important parameter in evaluating the acid–base balance of water. It is also the indicator of acidic or alkaline condition of water status. WHO has recommended a maximum permissible limit of pH from 6.5 to 8.5. The current investigation ranges were 6.52–6.83 which are in the range of WHO standards.
 
 ## 2. Hardness:
 Hardness is mainly caused by calcium and magnesium salts. These salts are dissolved from geologic deposits through which water travels. The length of time water is in contact with hardness producing material helps determine how much hardness there is in raw water. Hardness was originally defined as the capacity of water to precipitate soap caused by Calcium and Magnesium.
 
 ## 3. Solids (Total dissolved solids - TDS):
-Water has the ability to dissolve a wide range of inorganic and some organic minerals or salts such as potassium, calcium, sodium, bicarbonates, chlorides, magnesium, sulfates etc. These minerals produced un-wanted taste and diluted color in appearance of water. This is the important parameter for the use of water. The water with high TDS value indicates that water is highly mineralized. Desirable limit for TDS is 500 mg/l and maximum limit is 1000 mg/l which prescribed for drinking purpose.
+Water has the ability to dissolve a wide range of inorganic and some organic minerals or salts such as potassium, calcium, sodium, bicarbonates, chlorides, magnesium, sulfates etc. These minerals produced an unwanted taste and diluted color in the appearance of water. This is the important parameter for the use of water. The water with high TDS value indicates that water is highly mineralized. The Desired limit for TDS is 500 mg/l and maximum limit is 1000 mg/l which is prescribed for drinking purpose.
 
 ## 4. Chloramines:
 Chlorine and chloramine are the major disinfectants used in public water systems. Chloramines are most commonly formed when ammonia is added to chlorine to treat drinking water. Chlorine levels up to 4 milligrams per liter (mg/L or 4 parts per million (ppm)) are considered safe in drinking water.
@@ -143,15 +143,13 @@ It is important also to check if all the data are normalized. So if the code fin
 
 ## Fix Null Values
 
-In this section we will fill the null values of the columns: ph, sulfate and trihalomethanes. 
+In this section we will fill the null values of the columns: ph, sulfate and trihalomethanes. We will fill the null values with the columns mean.
 
 ```
 df.ph = df.ph.fillna(df.ph.mean())
 df.Sulfate = df.Sulfate.fillna(df.Sulfate.mean())
 df.Trihalomethanes = df.Trihalomethanes.fillna(df.Trihalomethanes.mean())
 ```
-
-We will fill the null values with the columns mean.
 
 ## Data Normalization
 In this section there will be the nomalization of the values. This process will use the ```StandardScaler()```. This scaler uses the mean and the standard deviation to set all values to between 0 and 1.
@@ -293,4 +291,4 @@ In this section we will see how well the network perform on the training set.
 
 ![Conf_Matr](img/conf_matr.png)
 
-As we can se only many values were misclassified.
+As we can see there are many false negative and false positive.
