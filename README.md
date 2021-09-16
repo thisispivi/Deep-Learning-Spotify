@@ -141,14 +141,55 @@ So the dataset is unbalanced, the potability class is just 39.01%. This means th
 ### Check Values
 It is important also to check if all the data are normalized. So if the code finds some values that are bigger than 1 and lower than 0, a normalization step will be performed. Unfortunately the dataset isn't all normalized.
 
+### Outliers and Skewness
+We also checked if there are many outliers and if the data are skewed. First we analyzed a box plot chart.
+
+![Boxplot](img/boxplot.png)
+
+As we can see there are a lot of outliers (the points on the left and on the right of the bars).
+After we plotted a distplot to check if data are skewed.
+
+![Distplot](img/distplot.png)
+
+As we can see some data are skewed, this means that the mode, median and mean won’t be on the same line.
+
+![Mode-Median-Mean](img/mode-median-mean.png)
+
+We have some columns that are positively skewed and some that are negatively skewed.
+### Correlation
+Next we checked the correlation to see if there is some statistical relationship between the data.
+
+![Correlation](img/correlation.png)
+
+We can see that there is no relationship between data.
+
+
 ## Fix Null Values
 
 In this section we will fill the null values of the columns: ph, sulfate and trihalomethanes. We will fill the null values with the columns mean.
 
-```
-df.ph = df.ph.fillna(df.ph.mean())
-df.Sulfate = df.Sulfate.fillna(df.Sulfate.mean())
-df.Trihalomethanes = df.Trihalomethanes.fillna(df.Trihalomethanes.mean())
+There are three options to fix null values:
+* **mean**: If there are outliers this is not the best solution
+* **median**: If there are outliers this is recommended
+* **drop**: If there are few rows this could be the worse because we lose many data
+
+```python
+# solution = "mean"
+solution = "median"
+# solution = "drop"
+
+if solution == "mean":
+  df.ph = df.ph.fillna(df.ph.mean())
+  df.Sulfate = df.Sulfate.fillna(df.Sulfate.mean())
+  df.Trihalomethanes = df.Trihalomethanes.fillna(df.Trihalomethanes.mean())
+elif solution == "median":
+  df.ph = df.ph.fillna(df.ph.median())
+  df.Sulfate = df.Sulfate.fillna(df.Sulfate.median())
+  df.Trihalomethanes = df.Trihalomethanes.fillna(df.Trihalomethanes.median())
+else:
+  df = df.dropna()
+
+
 ```
 
 ## Data Normalization
@@ -229,7 +270,7 @@ There is also a section to load a model. To do this it's important to follow the
 4. Run the load data section
 
 # Best model analysis
-In this section we will analyze the best model that we achieved.
+In this section we will analyze the best model that we achieved. This is the best model achieved in terms of accuracy. This model uses the median to substitute the null values.
 
 ## Network structure
 
@@ -278,14 +319,14 @@ In this section we will see how well the network perform on the training set.
 
 | Accuracy | Loss |
 |:--------:|:----:|
-| 68.75 % | 0.5980 |
+| 70.50 % | 0.5884 |
 
 0.6283611059188843, 0.6725000143051147
 
 | Class | Precision | Recall | f1-score | support |
 |:-----:|:---------:|:------:|:--------:|:-------:|
-| 0 | 0.68 | 0.71 | 0.70 | 202 |
-| 1 | 0.69 | 0.67 | 0.68 | 198 |
+| 0 | 0.72 | 0.68 | 0.70 | 203 |
+| 1 | 0.69 | 0.73 | 0.71 | 197 |
 
 ### Confusion Matrix
 
