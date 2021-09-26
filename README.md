@@ -40,18 +40,19 @@ This readme will explain the dataset structure, how the project works and the be
   * [Network structure](#network-structure)
   * [Cross-Validation Code](#cross-validation-code)
   * [Network creation](#network-creation)
-    + [Options](#options)
-    + [Network Creation and Training](#network-creation-and-training)
     + [Network Evaluate](#network-evaluate)
     + [Save Model](#save-model)
-  * [Load Model](#load-model)
 - [Test](#test)
 - [Best model analysis](#best-model-analysis)
   * [Model Loss](#model-loss)
   * [Model Accuracy](#model-accuracy)
-  * [Test set performance](#test-set-performance)
+  * [Test set with SMOTE performance](#test-set-with-smote-performance)
     + [Confusion Matrix](#confusion-matrix)
+  * [Test set without SMOTE performance](#test-set-without-smote-performance)
+    + [Confusion Matrix](#confusion-matrix-1)
 - [Consideration on the network](#consideration-on-the-network)
+- [How to run the project](#how-to-run-the-project)
+  * [Load the model](#load-the-model)
 
 # Project structure
 ```
