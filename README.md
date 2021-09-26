@@ -59,13 +59,18 @@ This readme will explain the dataset structure, how the project works and the be
 |
 | Folders
 ├── data   # Folder with the dataset
-│   └── data.zip
+│   └── water_potability.csv
 ├── network   # Folder with the network
-│   └── network.zip
+│   └── network.zip
+├── notebook  # Folder with the notebook
+│   └── Water_Potability.ipynb
 ├── img   # Images of the graphs for the analysis report
 |
-| Notebook
-└── Water_Potability.ipynb
+| Script
+├── analyze_dataset.py   # Function to analyze dataset
+├── deep_learing.py   # Function to perform deep learning
+├── main.py
+└── variables.py   # File with the variables to configure the code
 ```
 
 # Dataset structure
@@ -206,7 +211,7 @@ We can see that there is no relationship between data.
 
 ## Fix Null Values
 
-In this section we will fill the null values of the columns: ph, sulfate and trihalomethanes. We will fill the null values with the columns mean.
+Next we will fix the null values of the columns: ph, sulfate and trihalomethanes. 
 
 There are three options to fix null values:
 * **mean**: If there are outliers this is not the best solution
@@ -250,7 +255,7 @@ In this section we try to fix the outlier problem. We decided to perform the cap
 
 We computed the 25th percentile and the 75th percentile, obtaining Q1 and Q3. Next we computed the [Interquartile Range (IQR)](https://en.wikipedia.org/wiki/Interquartile_range) and then we computed the “Minimum” and the “Maximum”. 
 
-Basically when we find an outlier that is lower than the “Minimum” we change its value with the “Minimum”. The same thing applied to the “Maximum”
+Basically when we find an outlier that is lower than the “Minimum” we change its value with the “Minimum”. The same thing applied to the “Maximum”.
 
 
 ## Data Normalization
@@ -337,7 +342,7 @@ To solve this we decided to perform the cross validation.
 
 So we divide the dataset in test and training set. 
 
-We split the training set in 6 parts. At every step the ka part of the training set will be the validation, while the remaining part will be the training set. 
+We split the training set in 6 parts. At every step the k<sup>a</sup> part of the training set will be the validation, while the remaining part will be the training set. 
 
 So we train the model for each of k parts avoiding the problem of overfitting.
 In the image in the next page it’s possible to see an example of cross validation using k=5.
@@ -411,42 +416,25 @@ But this is not the best solution that we found.
 
 
 ## Network creation
-In the code there is a section called **Create New Model** and it is helpful to create, train and evaluate a model.
 
-### Options
-In the first part of the section there are some boolean variables that tune what the code will do:
-
-* ```train_model``` -> True: the network will be trained / False: network wont' be trained
-* ```model_loss``` -> True: plot the model loss / False: don't plot the model loss
-* ```model_accuracy``` -> True: plot the model accuracy / False: don't plot the model accuracy
-* ```evaluate_model``` -> True: evaluate the model / False: don't evaluate the model
-* ```conf_matr``` -> True: plot the confusion matrix / False: don't plot the confusion matrix
-* ```plot_model``` -> True: plot the structure of the network / False: don't plot the structure of the network
-* ```save_model``` -> True: save the model / False: don't save the model
-
-### Network Creation and Training
-After the variables tuning there is the network creation and training. 
+Here there are two options:
+1. Create a new model
+2. Load a model
+With the first option we need to create a model and train it. While with the other we can just import the model and test it.
 
 ### Network Evaluate
 In this section there is the network evaluation. The code will plot useful data to understand how well the model is made and how it performs on the test set.
-
 The plots will be:
 * The model loss graph
 * The model accuracy graph
-* The performance of the test set
-* The confusion matrix
+* The performance of the test set using the balanced dataset
+* The confusion matrix using the balanced dataset
+* The performance of the test set using the original dataset
+* The confusion matrix using the original dataset
 
 ### Save Model
-At the end there is the possibility to save the model into a zip file. The only parameters to configure are the name of the folder *file_name* and the name of the folder in the zip command.
+In the code there is also the possibility to save the created model. In the ```variables.py``` it is possible to choose the name. The model will be a folder in the network folder.
 
-## Load Model
-
-There is also a section to load a model. To do this it's important to follow these steps:
-
-1. Load into colab the ```model.zip``` file
-2. Uncomment the load data section
-3. Insert the name of the folder into the *file_name* variable
-4. Run the load data section
 
 # Test
 
@@ -482,7 +470,7 @@ As we can see there are some spikes in the Validation but overall it follows the
 
 As we can see there are some spikes in the accuracy and as we can see there's a little overfitting. 
 
-## Test set performance
+## Test set with SMOTE performance
 
 In this section we will see how well the network perform on the training set.
 
@@ -504,7 +492,86 @@ As we can see the results aren’t so good. We have low accuracy on the test set
 
 As we can see there are many false negatives and false positives.
 
+## Test set without SMOTE performance
+
+In this section we will see how well the network perform on the training set.
+
+| Accuracy | Loss |
+|:--------:|:----:|
+| 68.0 % | 0.5675 |
+
+
+| Class | Precision | Recall | f1-score | support |
+|:-----:|:---------:|:------:|:--------:|:-------:|
+| 0 | 0.77 | 0.70 | 0.75 | 206 |
+| 1 | 0.56 | 0.65 | 0.60 | 122 |
+
+In general the performance is bad, without the dataset balanced the situation is still bad and also worse, mostly for the class with few elements.
+
+### Confusion Matrix
+
+![Conf_Matr](img/conf_matr_original.png)
+
+As we can see there are many false negatives and false positives.
+
 # Consideration on the network
 The dataset is skewed and has a lot of outliers. This creates a lot of problems in fact the best model achieved so far has an accuracy of 70.50%. 
 
 In general when we run the script the mean accuracy of the model is between 63% and 68%. 
+
+# How to run the project
+Here we will explain how to run the code. It’s important to have python installed
+
+1. Clone the repository
+```bash
+git clone https://github.com/thisispivi/Deep-Learning-Water-Potability.git
+```
+
+2. Run these lines on a terminal
+```bash
+pip install sklearn
+pip install imblearn
+pip install pandas
+pip install matplotlib
+pip install tensorflow
+pip install seaborn
+```
+
+3. Open the ```variables.py``` file and configure the variables:
+* **train_model** -> True: the network will be trained / False: network won't' be trained
+* **model_loss** -> True: plot the model loss / False: don't plot the model loss
+* **model_accuracy** -> True: plot the model accuracy / False: don't plot the model accuracy
+* **evaluate_model** -> True: evaluate the model / False: don't evaluate the model
+* **conf_matr** -> True: plot the confusion matrix / False: don't plot the confusion matrix
+vplot_model** -> True: plot the structure of the network / False: don't plot the structure of the network
+* **save_model** -> True: save the model / False: don't save the model
+* **load_model** -> True: load a model in the network folder / False: don't load the model
+
+4. Choose how to deal with null values by uncommenting one of the rows:
+```python
+# solution = "mean"
+solution = "median"
+# solution = "drop"
+```
+
+5. Choose if to remove outliers by putting the variable to True or False
+```python
+substitute = True
+```
+
+6. Run the code:
+```bash
+python main.py
+```
+
+## Load the model
+To load our trained model:
+
+1. Go the network folder and unzip the model.zip file
+
+2. Open the ```variables.py``` file and change the ```load_model``` variable to **True**
+
+3. Run the code:
+```bash
+python main.py
+```
