@@ -10,7 +10,7 @@ from deep_learning import *
 if __name__ == "__main__":
 
     # Read Files: In this section we import the csv files.
-    df = pd.read_csv('water_potability.csv')
+    df = pd.read_csv(dataset_file)
 
     # Split the dataset into label and data
     labels = df['Potability']
@@ -19,16 +19,19 @@ if __name__ == "__main__":
     # Analyze Dataset: In this section we will analyze the dataset shape, balance and if it has null values in its rows
 
     # Shape: Check the shape of the dataset
+    print('\nCheck Dataset Shape')
     print('Data shape:', data.shape)
     print('Labels shape:', labels.shape)
 
     # Null values: Check if there are null values
+    print('\nCheck Dataset Null Values\n')
     num_null = df.isnull().sum(axis=0).sum()
     fix_null = False
     if num_null > 0:
         fix_null = True
 
     # Balance: Check if the dataset is balanced
+    print("Check if the Dataset is balanced")
     balanced = True
     zero_percentage = balance(df['Potability'], False)
     if zero_percentage != 50.0:
@@ -45,22 +48,27 @@ if __name__ == "__main__":
     # Fix Null Values
     if fix_null:
         if solution == "mean":
+            print("\nSubstitute null values with mean")
             df.ph = df.ph.fillna(df.ph.mean())
             df.Sulfate = df.Sulfate.fillna(df.Sulfate.mean())
             df.Trihalomethanes = df.Trihalomethanes.fillna(df.Trihalomethanes.mean())
         elif solution == "median":
+            print("\nSubstitute null values with median")
             df.ph = df.ph.fillna(df.ph.median())
             df.Sulfate = df.Sulfate.fillna(df.Sulfate.median())
             df.Trihalomethanes = df.Trihalomethanes.fillna(df.Trihalomethanes.median())
         else:
+            print("\nDrop Null Values")
             df = df.dropna()
 
     # Fix outliers
     if substitute:
+        print("\nCapping and flooring")
         df = capping_flooring(df)
         plot_outliers(df, True)
 
     # Normalize values
+    print("Normalize Dataset\n")
     df = normalize_dataset(df)
 
     # Update labels and data
@@ -72,6 +80,7 @@ if __name__ == "__main__":
     labels_new = labels
 
     if not balanced:
+        print("Balance Dataset using SMOTE")
         sm = SMOTE()
         data_new, labels_new = sm.fit_resample(data, labels)
 
@@ -81,6 +90,7 @@ if __name__ == "__main__":
         balance(pd.Series(labels_new), True)
 
     # Split data into training, validation and test set
+    print("\nSplit data")
     x_train, x_test, y_train, y_test = train_test_split(data_new, labels_new, train_size=0.9)
     x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, train_size=0.8)
 
@@ -94,16 +104,18 @@ if __name__ == "__main__":
     input("PRESS ENTER TO CONTINUE.")
 
     if not load_model:
-
+        print("\nCreate new model")
         model = get_model()
 
         # Train the network
         history = None
         if train_model and solution != "drop":
+            print("\nTrain the network")
             history = model.fit(x_train, y_train, epochs=200, validation_data=(x_valid, y_valid))
 
         # Cross Validation
         if solution == "drop":
+            print("\Cross Validation")
             x_train, x_test, y_train, y_test = train_test_split(data_new, labels_new, train_size=0.8)
             history, model = cross_validation(x_train, y_train)
 
@@ -116,27 +128,37 @@ if __name__ == "__main__":
             plot_accuracy(history)
     else:
         # Load model
+        print("\nLoad model")
         model = keras.models.load_model(file_name)
 
     # Evaluate the model: Check how well the dataset perform on the test set
     if evaluate_model:
+        print("\nModel Performance / Balanced Dataset")
         model.evaluate(x_test, y_test)
 
     # Confusion Matrix: Compute the label prediction using the test set and plot the confusion matrix.
     if conf_matr:
-        plot_conf_matr(model, x_test, y_test, "Confusion Matrix / Balanced Dataset")
+        plot_conf_matr(model, x_test, y_test, 'Confusion Matrix / Balanced Dataset')
+    
+    # Test performance original value
+    x_original_train, x_original_test, y_original_train, y_original_test = train_test_split(data, labels, train_size=0.9)
 
-        # Test performance original value
-        x_original_train, x_original_test, y_original_train, y_original_test = train_test_split(data, labels, train_size=0.9)
+    # Evaluate the model: Check how well the dataset perform on the test set
+    if evaluate_model:
+        print("\nModel Performance / Original Dataset")
+        model.evaluate(x_original_test, y_original_test)
 
-        plot_conf_matr(model, x_original_test, y_original_test, "Confusion Matrix / Original Dataset")
+    # Confusion Matrix: Compute the label prediction using the test set and plot the confusion matrix.
+    if conf_matr:
+        plot_conf_matr(model, x_original_test, y_original_test, 'Confusion Matrix / Original Dataset')
 
     # Save the model
     if save_model:
+        print("\nSave Model")
         model.save(file_name)
 
     # Plot model
     if plot_model:
         dot_img_file = "network.png"
-        keras.utils.model_to_dot(model, show_shapes=True)
+        keras.utils.plot_model(model, to_file=dot_img_file, show_shapes=True)
 
