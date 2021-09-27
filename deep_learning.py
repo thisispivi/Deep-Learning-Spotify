@@ -9,10 +9,6 @@ import numpy as np
 
 
 def get_model():
-    """
-    Create a new keras model
-    :return: The keras model
-    """
     new_model = keras.models.Sequential()
     new_model.add(keras.layers.Dense(64, activation='relu', input_shape=(9,)))
     new_model.add(keras.layers.Dropout(0.5))
@@ -29,13 +25,6 @@ def get_model():
 
 
 def cross_validation(x_train, y_train):
-    """
-    Perform the cross validation
-    :param x_train: Training set Data
-    :param y_train: Training set Labels
-    :return best_history: The history of the best model
-    :return best_model: The best model
-    """
     max_validation_score = 0
     k = 6
     best_model = None
@@ -63,9 +52,6 @@ def cross_validation(x_train, y_train):
 
 
 def plot_loss(history):
-    """
-    Plot the loss graph of the model
-    """
     plt.subplots(figsize=(12, 8))
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
@@ -78,9 +64,6 @@ def plot_loss(history):
 
 
 def plot_accuracy(history):
-    """
-    Plot the accuracy graph of the model
-    """
     plt.subplots(figsize=(12, 8))
     plt.plot(history.history['accuracy'])
     plt.plot(history.history['val_accuracy'])
@@ -93,13 +76,6 @@ def plot_accuracy(history):
 
 
 def plot_conf_matr(model, x_test, y_test, title):
-    """
-    Plot the confusion matrix of the model
-    :param model: the keras model
-    :param x_test: the data of the test set
-    :param y_test: test set labels
-    :param title: the title of the graph
-    """
     predictions = model.predict(x_test)
     classes = predictions > 0.5
     cm = confusion_matrix(y_test, classes)

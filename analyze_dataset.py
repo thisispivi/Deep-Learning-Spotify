@@ -5,14 +5,8 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 
 
-def balance(df, smote):
-    """
-    Print the dataset info
-    :param df: The pandas dataframe
-    :param smote: A boolean that changes the title of the graph depending on if the dataset has been balanced or not
-    :return: The percentage of elements of class 0 in the dataframe
-    """
-    result = df.value_counts()
+def balance(new_df):
+    result = new_df.value_counts()
     zero_percentage = round((result[0] * 100) / (result[0] + result[1]), 2)
     print("No. of 0: " + str(result[0]) + "\nNo. of 1: " + str(result[1]) +
           "\nPercentage of 0: " + str(zero_percentage) + " %\nPercentage of 1: " +
@@ -20,31 +14,19 @@ def balance(df, smote):
 
     plt.bar(x=["No Potability", "Potability"], height=[result[0], result[1]], color=["royalblue", "indianred"])
     plt.ylabel("Count")
-    if smote:
-        plt.title("Number of No Potability rows vs number of Potability rows / Balanced Dataset")
-    else:
-        plt.title("Number of No Potability rows vs number of Potability rows / Original Dataset")
+    plt.title("Number of No Potability rows vs number of Potability rows")
     plt.draw()
     plt.show()
 
     plt.pie([result[0], result[1]], labels=["No Potability", "Potability"], explode=(0.1, 0), autopct='%1.2f%%',
             colors=["thistle", "paleturquoise"], radius=1.2)
-    if smote:
-        plt.title("Number of No Bankrupt rows vs number of Bankrupt rows / Balanced Dataset")
-    else:
-        plt.title("Number of No Bankrupt rows vs number of Bankrupt rows / Original Dataset")
-
+    plt.title("Number of No Potability rows vs number of Potability rows")
     plt.draw()
     plt.show()
     return zero_percentage
 
 
 def plot_outliers(df, without_outlier):
-    """
-    Plot the outliers of the data
-    :param df: The pandas dataframe
-    :param without_outlier: Boolean to modify the title of the graph
-    """
     fig, ax = plt.subplots(3, 3, figsize=(16, 12))
     if without_outlier:
         fig.suptitle('Without outliers after capping and flooring')
@@ -64,10 +46,6 @@ def plot_outliers(df, without_outlier):
 
 
 def plot_skewness(df):
-    """
-    Plot the skewness of the data
-    :param df: The pandas dataframe
-    """
     fig, ax = plt.subplots(3, 3, figsize=(16, 12))
     fig.suptitle('Checking Skewness')
     sns.distplot(ax=ax[0, 0], x=df["ph"][df["Potability"] == 1], color='cyan', axlabel="ph")
@@ -103,10 +81,6 @@ def plot_skewness(df):
 
 
 def plot_correlation(df):
-    """
-    Plot the correlation between data
-    :param df: The pandas dataframe
-    """
     plt.subplots(figsize=(12, 8))
     sns.heatmap(df.corr(), annot=True, linewidth=.01, cmap=sns.cubehelix_palette(as_cmap=True))
     plt.title("Correlation")
@@ -115,11 +89,6 @@ def plot_correlation(df):
 
 
 def capping_flooring(df):
-    """
-    Perform capping and flooring
-    :param df: The pandas dataframe
-    :return: The fixed dataset
-    """
     for col in df:
         q1 = df[col].quantile(0.25)
         q3 = df[col].quantile(0.75)
@@ -133,11 +102,6 @@ def capping_flooring(df):
 
 
 def normalize_dataset(df):
-    """
-    Normalize the dataset
-    :param df: The pandas dataframe
-    :return: The normalized dataset
-    """
     # Take the columns with values over 1
     cols_for_scale = df.max()[df.max() > 1]
     # Take the columns with values less than 0
