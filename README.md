@@ -262,65 +262,17 @@ Basically when we find an outlier that is lower than the “Minimum” we change
 ## Data Normalization
 In this section there will be the nomalization of the values. This process will use the ```StandardScaler()```. This scaler uses the mean and the standard deviation to set all values to between 0 and 1.
 
-## Balance Dataset
-The dataset has been balanced using [**SMOTE**](https://towardsdatascience.com/applying-smote-for-class-imbalance-with-just-a-few-lines-of-code-python-cdf603e58688) (Synthetic Minority Oversampling Technique).
-
-The dataset will be filled with new data and it will be balanced. 
-
-We have to distinguish two cases: the case when we substitute null values with the mean and the median and the case when we delete null values rows.
-
-### Substitution
-
-The new shape is **(3996,10)**
-
-| Class | Number | Percentage |
-|:-----:|:------:|:----------:|
-|   0   |  1988  |    50.0 %  |
-|   1   |  1988  |    50.0 %  |
-
-![class_balance_bar_post](img/class_balance_bar_post.png)
-
-![class_balance_pie_post](img/class_balance_pie_post.png)
-
-Now the dataset can be used with the networks.
-
-### Removal
-
-The shape of the dataset without the rows with null values is **(2011,10)**.
-
-| Class | Number | Percentage |
-|:-----:|:------:|:----------:|
-|   0   |  1200  |    56.97 %  |
-|   1   |  811   |    40.33 %  |
-
-![class_balance_bar_removal](img/class_balance_bar_removal.png)
-
-![class_balance_pie_removal](img/class_balance_pie_removal.png)
-
-With SMOTE the situation become:
-
-| Class | Number | Percentage |
-|:-----:|:------:|:----------:|
-|   0   |  1200  |    50.0 %  |
-|   1   |  1200  |    50.0 %  |
-
-![class_balance_bar_removal_post](img/class_balance_bar_removal_post.png)
-
-![class_balance_pie_removal_post](img/class_balance_pie_removal_post.png)
-
-At this point there are two ways to proceed:
-1. If we dropped the rows that contained null values we have to perform the Cross Validation.
-2. If we substituted the rows that contained null values with median or mean we have just to split the dataset in training, validation and test set.
-
-The thing that changes is the way we split the dataset.
-
 
 ## Split data into training, validation and test set
 As we discussed in the previous paragraph there are two ways to split the training set depending on how we dealt with null values.
 
+### Balance Training set
+The training set has been balanced using [**SMOTE**](https://towardsdatascience.com/applying-smote-for-class-imbalance-with-just-a-few-lines-of-code-python-cdf603e58688) (Synthetic Minority Oversampling Technique). The training set will be filled with new data and it will be balanced. We have to distinguish two cases: the case when we substitute null values with the mean and the median and the case when we delete null values rows.
+The SMOTE is done before the splitting in training set and validation set
+
 ### Substitution
 
-Split the data in:
+In the substitution the data are split in:
 * ```x_train```: The training set data
 * ```y_train```: The training set label
 * ```x_valid```: The validation set data
@@ -330,11 +282,11 @@ Split the data in:
 
 The dimension will be something like
 
-| Set | Percentage | Rows |
-|:---:|:----------:|:----:|
-|Training| 72 % | 2876 |
-| Validation | 18 % | 720 |
-| Test | 10 % | 400 |
+| Set | Percentage | 
+|:---:|:----------:|
+|Training| 72 % |
+| Validation | 18 % |
+| Test | 10 % |
 
 ### Removal
 Since the number of elements in the dataset has decreased, we lost a lot of data. This can affect the training of our model because a low number of data could produce a bad model.
@@ -351,11 +303,11 @@ In the image in the next page it’s possible to see an example of cross validat
 ![Cross-Validation](img/cross-validation.png)
 
 The size will be for each iteration something like:
-| Set | Percentage | Rows |
-|:---:|:----------:|:----:|
-|Training| 66.7 % | 1600 |
-| Validation | 13.3 % | 320 |
-| Test | 20 % | 480 |
+| Set | Percentage |
+|:---:|:----------:|
+|Training| 66.7 % |
+| Validation | 13.3 % |
+| Test | 20 % |
 
 ## Network structure
 The network we created, for each Dense layer except the last one uses **relu** as activation function. In the last Dense layer it uses the **sigmoid** activation function.
@@ -471,19 +423,19 @@ As we can see there are some spikes in the Validation but overall it follows the
 
 As we can see there are some spikes in the accuracy and as we can see there's a little overfitting. 
 
-## Test set with SMOTE performance
+## Test set performance
 
 In this section we will see how well the network perform on the training set.
 
 | Accuracy | Loss |
 |:--------:|:----:|
-| 70.50 % | 0.5884 |
+| 70.73 % | 0.5924 |
 
 
 | Class | Precision | Recall | f1-score | support |
 |:-----:|:---------:|:------:|:--------:|:-------:|
-| 0 | 0.72 | 0.68 | 0.70 | 203 |
-| 1 | 0.69 | 0.73 | 0.71 | 197 |
+| 0 | 0.75 | 0.75 | 0.75 | 197 |
+| 1 | 0.63 | 0.63 | 0.63 | 131 |
 
 As we can see the results aren’t so good. We have low accuracy on the test set and even on the validation set.
 
@@ -493,27 +445,6 @@ As we can see the results aren’t so good. We have low accuracy on the test set
 
 As we can see there are many false negatives and false positives.
 
-## Test set without SMOTE performance
-
-In this section we will see how well the network perform on the training set.
-
-| Accuracy | Loss |
-|:--------:|:----:|
-| 68.0 % | 0.5675 |
-
-
-| Class | Precision | Recall | f1-score | support |
-|:-----:|:---------:|:------:|:--------:|:-------:|
-| 0 | 0.77 | 0.70 | 0.75 | 206 |
-| 1 | 0.56 | 0.65 | 0.60 | 122 |
-
-In general the performance is bad, without the dataset balanced the situation is still bad and also worse, mostly for the class with few elements.
-
-### Confusion Matrix
-
-![Conf_Matr](img/conf_matr_original.png)
-
-As we can see there are many false negatives and false positives.
 
 # Consideration on the network
 The dataset is skewed and has a lot of outliers. This creates a lot of problems in fact the best model achieved so far has an accuracy of 70.50%. 
