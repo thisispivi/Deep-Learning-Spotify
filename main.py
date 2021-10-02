@@ -102,11 +102,12 @@ if __name__ == "__main__":
 
     # Split data into training, validation and test set
     print("Split training and test set\n")
-    x_train, x_test, y_train, y_test = train_test_split(
-        data, labels, train_size=0.9)
     if solution == "drop":
         x_train, x_test, y_train, y_test = train_test_split(
             data, labels, train_size=0.8)
+    else:
+        x_train, x_test, y_train, y_test = train_test_split(
+            data, labels, train_size=0.9)
 
     if not balanced:
         print("Balance Dataset using SMOTE")
@@ -183,11 +184,10 @@ if __name__ == "__main__":
     # Confusion Matrix: Compute the label prediction using the test set and plot the confusion matrix.
     if conf_matr:
         if not save_figure:
-            plot_conf_matr(model, x_test, y_test,
-                           'Confusion Matrix / Original Dataset')
+            plot_conf_matr(model, x_test, y_test, 'Confusion Matrix')
         else:
             plot_conf_matr(model, x_test, y_test,
-                           'Confusion Matrix / Original Dataset', img_folder / "conf_matr.png")
+                           'Confusion Matrix', img_folder / "conf_matr.png")
 
     # Save the model
     if save_model:

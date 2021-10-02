@@ -5,7 +5,7 @@ Null values management -> Uncomment to select one
 """
 # solution = "mean"
 solution = "median"
-# solution = "drop"
+#solution = "drop"
 
 
 """

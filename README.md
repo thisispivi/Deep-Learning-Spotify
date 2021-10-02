@@ -63,8 +63,6 @@ This readme will explain the dataset structure, how the project works and the be
 │   └── water_potability.csv
 ├── network   # Folder with the network
 │   └── network.zip
-├── notebook  # Folder with the notebook
-│   └── Water_Potability.ipynb
 ├── img   # Images of the graphs for the analysis report
 |
 | Script
@@ -129,9 +127,7 @@ Indicates if water is safe for human consumption where 1 means Potable and 0 mea
 This section will show how the project works.
 
 ## Dataset download and import
-In the first part of the code there will be the download of the dataset from github or from kaggle. In the second case it's important to insert in the corret folder the api token. In this [link](https://www.kaggle.com/docs/api) there's a guide on how to create a token.
-
-Next using pandas the dataset will be inserted in a pandas dataframe.
+In the first part of the code there is the import of the dataset into a pandas dataframe. This is a *csv* file in the **data** folder.
 
 ## Dataset analysis
 In the next part there will be an analysis of the dataset.
@@ -155,10 +151,10 @@ Turbidity            0
 Potability           0
 ```
 
-Unortunately there are three columns with null values.
+In this dataset there are null values.
 
 ### Balance
-Next it's important to check the balance of the dataset, because if there is a class that has more rows than the other the classification will have a good accuracy but it won't perform well on the minor class.
+Next it's important to check the balance of the dataset, because if there is a class that has more rows than the other the classification will have a good accuracy but it won't perform well in the minor class.
 
 | Class | Number | Percentage |
 |:-----:|:------:|:----------:|
@@ -174,16 +170,14 @@ So the dataset is unbalanced, the potability class is just 39.01%. This means th
 ### Check Values
 It is important also to check if all the data are normalized. So if the code finds some values that are bigger than 1 and lower than 0, a normalization step will be performed. 
 
-The dataset isn't all normalized.
-
+The dataset isn't all normalized, so we need to process it.
 
 ### Outliers
 We also checked if there are many outliers using a box plot chart.
 
-
 ![Boxplot](img/boxplot.png)
 
-As we can see there are a lot of outliers (the points on the left and on the right of the bars).
+As we can see many of the columns have outliers. So in a future step there will be the possibility to fix them. 
 
 ### Skewness
 
@@ -201,14 +195,12 @@ The positive skewness is a problem because it means that we have a high number o
 
 We can also use skewness to see the direction of the outliers. A positive skew column will have many outliers in the right side of the distribution.
 
-
 ### Correlation
 Next we checked the correlation to see if there is some statistical relationship between the data.
 
 ![Correlation](img/correlation.png)
 
 We can see that there is no relationship between data.
-
 
 ## Fix Null Values
 
@@ -242,9 +234,11 @@ In the first one the water bodies with null values aren’t removed from the dat
 
 In the second one the water bodies with null values aren’t removed from the dataset and each null value is replaced with the median of the column. 
 
-In the third case the elements with null values are dropped from the dataset. Therefore some parts of the code are different for these approaches.
+In the third case the elements with null values are dropped from the dataset. 
 
-By removing null values we will have a more robust and highly accurate model despite the loss of data, while substituting null values with the median we don’t remove the outliers but we don’t lose and compromise the data. 
+Based on the approach chosen the code will be different.
+
+By removing null values we will have a more robust and highly accurate dataset despite the loss of data, while substituting null values with the median we modify the dataset but we don’t lose and compromise the data. 
 
 As concerns the mean, in the dataset there are a lot of outliers, this fact affects the mean so it is not the best option.
 
@@ -263,16 +257,35 @@ Basically when we find an outlier that is lower than the “Minimum” we change
 In this section there will be the nomalization of the values. This process will use the ```StandardScaler()```. This scaler uses the mean and the standard deviation to set all values to between 0 and 1.
 
 
-## Split data into training, validation and test set
+## Split data into training and test set
 As we discussed in the previous paragraph there are two ways to split the training set depending on how we dealt with null values.
 
-### Balance Training set
+### Median and mean
+|Set|Percentage|Rows|
+|:-:|:-:|:-:|
+|Training|90 %|2948|
+|Test|10%|328|
+
+### Drop
+|Set|Percentage|Rows|
+|:-:|:-:|:-:|
+|Training|80 %|1608|
+|Test|20%|403|
+
+
+## Balance Training set
 The training set has been balanced using [**SMOTE**](https://towardsdatascience.com/applying-smote-for-class-imbalance-with-just-a-few-lines-of-code-python-cdf603e58688) (Synthetic Minority Oversampling Technique). The training set will be filled with new data and it will be balanced. We have to distinguish two cases: the case when we substitute null values with the mean and the median and the case when we delete null values rows.
+
 The SMOTE is done before the splitting in training set and validation set
 
-### Substitution
+## Split the training set into validation and training set
+We have to distinguish two cases: 
+* the case when we substitute null values with the mean and the median
+* the case when we delete null values rows.
 
-In the substitution the data are split in:
+### Substitution
+First we split the **training set** into **train** and **validation** sets. Validation set will be 20% of the training set. So in the substitution the data are split in:
+
 * ```x_train```: The training set data
 * ```y_train```: The training set label
 * ```x_valid```: The validation set data
@@ -280,38 +293,42 @@ In the substitution the data are split in:
 * ```x_test```: The validation set data
 * ```y_test```: The validation set label
 
-The dimension will be something like
+The sizes will be something like
 
-| Set | Percentage | 
-|:---:|:----------:|
-|Training| 72 % |
-| Validation | 18 % |
-| Test | 10 % |
+| |Training|Validation|Test|
+|:-:|:-:|:-:|:-:|
+|Percent of the dataset|72%|18%|10%|
 
 ### Removal
-Since the number of elements in the dataset has decreased, we lost a lot of data. This can affect the training of our model because a low number of data could produce a bad model.
+In the removal case, since the number of elements in the dataset has decreased, we lost a lot of data. This can affect the training of our model because a low number of data could produce a bad model.
 
 To solve this we decided to perform the cross validation. 
 
 So we divide the dataset in test and training set. 
 
-We split the training set in 6 parts. At every step the k<sup>a</sup> part of the training set will be the validation, while the remaining part will be the training set. 
+We split the training set in 6 parts. At every step the ka part of the training set will be the validation, while the remaining part will be the training set. 
 
 So we train the model for each of k parts avoiding the problem of overfitting.
+
 In the image in the next page it’s possible to see an example of cross validation using k=5.
 
 ![Cross-Validation](img/cross-validation.png)
 
 The size will be for each iteration something like:
-| Set | Percentage |
-|:---:|:----------:|
-|Training| 66.7 % |
-| Validation | 13.3 % |
-| Test | 20 % |
+| |Training|Validation|Test|
+|:-:|:-:|:-:|:-:|
+|Percent of the dataset|66.7%|13.3%|20%|
 
 ## Network structure
-The network we created, for each Dense layer except the last one uses **relu** as activation function. In the last Dense layer it uses the **sigmoid** activation function.
-In all Dense layers in the middle of the network there is also the **l2 kernel regularizer** setted with (0.001). The optimizer used is **Adam** with the learning rate set at 0.001. The loss function used is the **binary cross entropy**.
+The network we created, for each Dense layer except the last one uses **relu** as activation function. 
+
+In the last Dense layer it uses the **sigmoid** activation function.
+
+In all Dense layers in the middle of the network there is also the **l2 kernel regularizer** setted with (0.001). 
+
+The optimizer used is **Adam** with the learning rate set at 0.001. 
+
+The loss function used is the **binary cross entropy**.
 
 ```python
 model = keras.models.Sequential()
@@ -331,7 +348,20 @@ In the following image it’s possible to see the structure of the network.
 
 ![Network](img/network.png)
 
-## Cross-Validation Code
+## Network creation or load network
+Here there are two options:
+1. Create a new model
+2. Load a model
+With the first option we need to create a model, we train it and test it. While with the other we can just import the model and test it.
+
+As we discussed in previous paragraph there are two options to train and test the network based on how we dealt with null values:
+1. Median, Mean: we train the model using the training set and the validation set created before. Next we test it with the original test set (created with the first split)
+1. Drop: we perform the cross validation, the best model will be tested with the original test set (created with the first split)
+
+### Network Training
+In the case of median and mean substitution the training of the network is really simple: we take the network, the training set and the validation set and we train the network.
+
+### Cross-Validation Code
 
 As we discussed in previous chapters this part of code is used in the case where we removed the rows with null value. 
 
@@ -367,16 +397,9 @@ result = best_model.evaluate(x_test, y_test)
 
 But this is not the best solution that we found.
 
-
-## Network creation
-
-Here there are two options:
-1. Create a new model
-2. Load a model
-With the first option we need to create a model and train it. While with the other we can just import the model and test it.
-
 ### Network Evaluate
-In this section there is the network evaluation. The code will plot useful data to understand how well the model is made and how it performs on the test set.
+After the training there is the network evaluation. The code will plot useful data to understand how well the model is made and how it performs on the test set.
+
 The plots will be:
 * The model loss graph
 * The model accuracy graph
@@ -387,7 +410,6 @@ The plots will be:
 
 ### Save Model
 In the code there is also the possibility to save the created model. In the ```variables.py``` it is possible to choose the name. The model will be a folder in the network folder.
-
 
 # Test
 
@@ -420,8 +442,6 @@ As we can see there are some spikes in the Validation but overall it follows the
 ## Model Accuracy
 
 ![Model Accuracy](img/model_accuracy.png)
-
-As we can see there are some spikes in the accuracy and as we can see there's a little overfitting. 
 
 ## Test set performance
 
@@ -478,6 +498,8 @@ pip install seaborn
 vplot_model** -> True: plot the structure of the network / False: don't plot the structure of the network
 * **save_model** -> True: save the model / False: don't save the model
 * **load_model** -> True: load a model in the network folder / False: don't load the model
+* **save_figure** -> True: save the image of the plots / False: show the plots
+* **substitute**  -> True: substitute outliers / False: don't fix outliers 
 
 4. Choose how to deal with null values by uncommenting one of the rows:
 ```python
@@ -486,12 +508,7 @@ solution = "median"
 # solution = "drop"
 ```
 
-5. Choose if to remove outliers by putting the variable to True or False
-```python
-substitute = True
-```
-
-6. Run the code:
+5. Run the code:
 ```bash
 python main.py
 ```
