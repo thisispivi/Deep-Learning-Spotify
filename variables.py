@@ -4,8 +4,8 @@ from pathlib import Path
 Null values management -> Uncomment to select one
 """
 # solution = "mean"
-solution = "median"
-#solution = "drop"
+# solution = "median"
+solution = "drop"
 
 
 """
@@ -32,7 +32,7 @@ plot_model = False
 save_model = True
 load_model = False
 save_figure = True
-substitute = True
+substitute = False
 
 data_folder = Path(__file__).parent.resolve() / Path("data")
 dataset_file = data_folder / 'water_potability.csv'

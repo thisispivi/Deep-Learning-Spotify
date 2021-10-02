@@ -428,11 +428,11 @@ In the following table it’s possible to see every type of test we did with the
 |Substitute Mean|Yes|Normal|63-68%|
 |Substitute Median|No|Normal|63-70%|
 |Substitute Median|Yes|Normal|63-68%|
-|Drop Rows|No|Cross Validation|64-66%|
-|Drop Rows|Yes|Cross Validation|63-68%|
+|Drop Rows|No|Cross Validation|65-68%|
+|Drop Rows|Yes|Cross Validation|60-65%|
 
 # Best model analysis
-In this section we will analyze the best model that we achieved. This is the best model achieved in terms of accuracy. This model uses the median to substitute the null values.
+In this section we will analyze the best model that we achieved. This is the best model achieved in terms of accuracy. This model uses the median to substitute the null values and performs capping and flooring.
 
 ## Model Loss
 ![Model Loss](img/model_loss.png)
